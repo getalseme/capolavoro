@@ -1,0 +1,6 @@
+{
+    "require": {
+        "bcosca/fatfree-core": "^3.8",
+        "firebase/php-jwt": "^6.10"
+    }
+}

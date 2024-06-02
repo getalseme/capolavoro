@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profilo utente</title>
+  <link rel="icon" type="image/ico" href="img/zlogo.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+  <style>
+    .fixed-card {
+      position: fixed;
+      top: 100px; /* Altezza della barra di navigazione */
+      left: 50px;
+      z-index: 1000; /* Assicura che la card sia sopra gli altri contenuti */
+      padding: 20px;
+      width: 400px;
+      height: 600px;
+    }
+  </style>
+  <style>
+    /* Style for the cookie consent banner */
+    #cookie-banner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #333;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        z-index: 1000;
+    }
+    #cookie-banner button {
+        margin-left: 10px;
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    #cookie-banner button:hover {
+        background-color: #0056b3;
+    }
+</style>
+  <style>
+    /* CHIMICA */
+.bg-CHIMICA { background-color: #FF5733; }
+
+/* COMPL.MAT. */
+.bg-COMPLMAT { background-color: #FFC300; }
+
+/* D.B. */
+.bg-DB { background-color: #FF00FF; }
+
+/* D.T. */
+.bg-DT { background-color: #1E90FF; }
+
+/* DIRITTO */
+.bg-DIRITTO { background-color: #FF5733; }
+
+/* ELETTRONICA */
+.bg-ELETTRONICA { background-color: #6A5ACD; }
+
+/* FISICA */
+.bg-FISICA { background-color: #FFD700; }
+
+/* GEOGRAFIA */
+.bg-GEOGRAFIA { background-color: #2E8B57; }
+
+/* GPOI */
+.bg-GPOI { background-color: #8A2BE2; }
+
+/* INFORMATICA */
+.bg-INFORMATICA { background-color: #32CD32; }
+
+/* INGLESE */
+.bg-INGLESE { background-color: #4169E1; }
+
+/* IRC */
+.bg-IRC { background-color: #FF69B4; }
+
+/* LETTERE */
+.bg-LETTERE { background-color: #FF1493; }
+
+/* MATEMATICA */
+.bg-MATEMATICA { background-color: #FF6347; }
+
+/* P */
+.bg-P { background-color: #808080; }
+
+/* R */
+.bg-R { background-color: #0000FF; }
+
+/* SC.MOTORIE */
+.bg-SCMOTORIE { background-color: #FF4500; }
+
+/* SC.TERRA-BIOL. */
+.bg-SCTERRA-BIOL { background-color: #008080; }
+
+/* SIST.AUTOM. */
+.bg-SISTAUTOM { background-color: #00CED1; }
+
+/* SIST.RETI */
+.bg-SISTRETI { background-color: #800080; }
+
+/* SOSTEGNO */
+.bg-SOSTEGNO { background-color: #228B22; }
+
+/* STA */
+.bg-STA { background-color: #D2691E; }
+
+/* TEC.INFORMATICA */
+.bg-TECINFORMATICA { background-color: #FF8C00; }
+
+/* TELECOMUNIC. */
+.bg-TELECOMUNIC { background-color: #00FF00; }
+
+/* TPSEE */
+.bg-TPSEE { background-color: #800000; }
+
+/* TPSIT */
+.bg-TPSIT { background-color: #008000; }
+
+/* TTRG */
+.bg-TTRG { background-color: #A52A2A; }
+
+</style>
+<style>
+    .bg-light-gray {
+    background-color: #f7f7f7;
+}
+.table-bordered thead td, .table-bordered thead th {
+    border-bottom-width: 2px;
+}
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+}
+.table-bordered td, .table-bordered th {
+    border: 1px solid #dee2e6;
+}
+
+.table-bordered td, .table-bordered th {
+    border: 1px solid #dee2e6;
+}
+.table td, .table th {
+    padding: .75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+}
+</style>
+</head>
+<script>
+  (function() {
+    function getCookie(name) {
+      let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) {
+        return match[2];
+      } else {
+        return null;
+      }
+    }
+
+    // Check if the zToken cookie is set
+    if (!getCookie('zToken')) {
+      window.location.href = 'login.html';
+    }
+  })();
+</script>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.html"><img src="img/zlogo.png" alt="Logo" width="60" height="60"> zResources</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="user.html"><i class="bi bi-person"></i> Utente</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>
+
+<div class="container" style="margin-top: 80px;">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="fixed-card" id="userCard">
+
+      </div>
+    </div>
+    <div class="col-md-9" style="margin-top: 60px;">
+      <h2 id="scheduleTitle" class="mb-4 clickable">Schedule Settimanale &#9662;</h2>
+      <div  id="scheduleTableWrapper" style="display: none;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Ora</th>
+              <th>Lunedì</th>
+              <th>Martedì</th>
+              <th>Mercoledì</th>
+              <th>Giovedì</th>
+              <th>Venerdì</th>
+              <th>Sabato</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleBody">
+            
+          </tbody>
+        </table>
+      </div>
+      <h2 id="activityTitle" class="mb-4 clickable">Attività &#9662;</h2>
+      <div id="activityTableWrapper" style="display: none;">
+          <p>Esempio di testo per le attività...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function fetchSchedule() {
+    var url = "http://localhost/P002_TrovaPersoneRisorse/server_rest/schedule";
+    fetch(url)
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error('Si è verificato un errore durante la richiesta: ' + response.status);
+        }
+        return response.json();
+      })
+      .then(function(data) {
+        displaySchedule(data);
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+  }
+
+  function displaySchedule(data) {
+    var tableBody = document.getElementById("scheduleBody");
+    var lessonsByDay = {
+      0: [],
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+      5: []
+    };
+    data.forEach(function(lesson) {
+            lessonsByDay[lesson.day].push(lesson);
+    });
+  
+  for (let hour = 0; hour < 6; hour++) {
+            var row = tableBody.insertRow(-1);
+            var timeCell = row.insertCell(0);
+            timeCell.textContent = formatHour(hour);
+
+            // Iterate over days of the week
+            for (let day = 0; day < 6; day++) {
+                var cell = row.insertCell(-1);
+                var dayLessons = lessonsByDay[day];
+
+                // Find lesson for the current day and hour
+                var lesson = dayLessons.find(function(lesson) {
+                    return lesson.hour === hour;
+                });
+
+                // If a lesson exists, display it
+                if (lesson) {
+                    var lessonInfo = document.createElement('div');
+                    lessonInfo.classList.add('margin-10px-bottom');
+
+                    // Format lesson information
+                    var color = lesson.subject.replaceAll(".","");
+                    color = color.replace("-","");
+                    lessonInfo.innerHTML = `
+                        <span class="bg-${color} padding-5px-tb padding-15px-lr b:_</div>
+                        <div class="font-size13 text-light-gray">${lesson.subject}</div>  
+                        <div class="font-size13 text-light-gray">${lesson.room}</div>
+                    `;
+
+                    cell.appendChild(lessonInfo);
+                }
+            }
+        }
+      }
+
+    // Helper function to format hour
+    function formatHour(hour) {
+        // Convert hour integer to string representation (e.g., 0 -> 9:00am, 1 -> 10:00am, etc.)
+        var hourString = (hour + 8) + ":00";
+        return hourString;
+    }
+
+
+    // Chiamata alla funzione per caricare i dati degli insegnanti all'avvio della pagina
+
+  fetchSchedule();
+</script>
+
+<script>
+    function fetchUser() {
+        var url = "http://localhost/P002_TrovaPersoneRisorse/server_rest/user/status";
+        fetch(url)
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Si è verificato un errore durante la richiesta: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                displayData(data);
+            })
+            .catch(function(error) {
+                console.error(error);
+            });
+    }
+
+    function displayData(data) {
+        var userCard = document.getElementById("userCard");
+        var user = data[0];
+        userCard.innerHTML = `
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Informazioni Utente</h5>
+                <p class="card-text"><strong>Nome:</strong> ${user.name}</p>
+                <p class="card-text"><strong>Cognome:</strong> ${user.surname}</p>
+                <p class="card-text"><strong>Email:</strong> ${user.email}</p>
+                <p class="card-text"><strong>Classi:</strong> <ul id="classList"></ul></p>
+                <button class="btn btn-danger" onclick="logout()">Logout</button>
+              </div>
+            </div>
+        `;
+    }
+
+    fetchUser();
+</script>
+<script>
+  // Esegui la richiesta GET per ottenere le classi dell'utente
+
+    document.addEventListener("DOMContentLoaded", function() {
+      fetch("http://localhost/P002_TrovaPersoneRisorse/server_rest/user/classes")
+      .then(function(response) {
+          if (!response.ok) {
+              throw new Error('Si è verificato un errore durante la richiesta: ' + response.status);
+          }
+          return response.json();
+      })
+      .then(function(classes) {
+          // Trova il campo delle classi nella card sinistra
+          var classList = document.getElementById("classList");
+
+          // Aggiungi una riga per ogni classe dell'utente
+          classes.forEach(function(classItem) {
+              var listItem = document.createElement('li');
+              listItem.textContent = classItem.name;
+              classList.appendChild(listItem);
+          });
+      })
+      .catch(function(error) {
+          console.error(error);
+      });
+    });
+
+    document.getElementById('scheduleTitle').addEventListener('click', function() {
+    var tableWrapper = document.getElementById('scheduleTableWrapper');
+    if (tableWrapper.style.display === 'none') {
+        tableWrapper.style.display = 'block';
+        this.innerHTML = 'Schedule Settimanale &#9652;'; // Cambia l'icona della freccia
+    } else {
+        tableWrapper.style.display = 'none';
+        this.innerHTML = 'Schedule Settimanale &#9662;'; // Cambia l'icona della freccia
+    }
+});
+
+// Funzione per gestire il click sul titolo delle attività
+document.getElementById('activityTitle').addEventListener('click', function() {
+    var activityWrapper = document.getElementById('activityTableWrapper');
+    if (activityWrapper.style.display === 'none') {
+        activityWrapper.style.display = 'block';
+        this.innerHTML = 'Attività &#9652;'; // Cambia l'icona della freccia
+    } else {
+        activityWrapper.style.display = 'none';
+        this.innerHTML = 'Attività &#9662;'; // Cambia l'icona della freccia
+    }
+});
+
+  function logout() {
+    fetch('http://localhost/P002_TrovaPersoneRisorse/server_rest/user/logout', {
+      method: 'DELETE'
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Si è verificato un errore durante il logout: ' + response.status);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Logout eseguito con successo', data);
+      // Esegui ulteriori azioni dopo il logout, come reindirizzare l'utente alla pagina di login
+      sessionStorage.removeItem("uStudent");
+      sessionStorage.removeItem("uTeacher");
+      sessionStorage.removeItem("uAdmin");
+      window.location.href = 'login.html';
+    })
+    .catch(error => {
+      console.error('Errore durante il logout:', error);
+    });
+  }
+
+</script>
+<div id="cookie-banner" style="display: none;">
+  Questo sito utilizza solo cookie tecnici per il puro funzionamento del sito.
+  <button id="consent-button">Acconsento</button>
+</div>
+
+<script>
+  // Function to get the value of a specific cookie
+  function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+  }
+
+  // Function to set a cookie
+  function setCookie(name, value, days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      const expires = `expires=${date.toUTCString()}`;
+      document.cookie = `${name}=${value};${expires};path=/`;
+  }
+
+  // Check if the cookie "cookie_consent" is set
+  if (!getCookie('cookie_consent')) {
+      document.getElementById('cookie-banner').style.display = 'block';
+  }
+
+  // Set the cookie when the user clicks "Acconsento"
+  document.getElementById('consent-button').addEventListener('click', function() {
+      setCookie('cookie_consent', 'accepted', 365); // Set cookie for 1 year
+      document.getElementById('cookie-banner').style.display = 'none';
+  });
+</script>
+</body>
+</html>

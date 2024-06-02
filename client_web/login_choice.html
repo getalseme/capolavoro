@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="icon" type="image/ico" href="img/zlogo.ico">
+  <link rel="stylesheet" href="style/login.css">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+  /* Style for the cookie consent banner */
+  #cookie-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      z-index: 1000;
+  }
+  #cookie-banner button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+  }
+  #cookie-banner button:hover {
+      background-color: #0056b3;
+  }
+</style>
+<script>
+  (function() {
+    function getCookie(name) {
+      let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) {
+        return match[2];
+      } else {
+        return null;
+      }
+    }
+
+    // Check if the zToken cookie is set
+    if (!getCookie('zToken')) {
+      window.location.href = 'login.html';
+    }
+  })();
+</script>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href=""><img src="img/zlogo.png" alt="Logo" width="60" height="60"> zResources</a>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      </div>
+    </div>
+  </nav>
+
+<!-- Contenuto principale -->
+<div class="container mt-5">
+  <div class="row d-flex justify-content-center" id="mainContent">
+  </div>
+</div>
+
+<script>
+    
+    function setCookie(name, value, days) {
+      var expires = "";
+      if (days) {
+          var date = new Date();
+          date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+          expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+
+    var isAdmin = sessionStorage.getItem("uAdmin");
+    var isStudent = sessionStorage.getItem("uStudent");
+    var isTeacher = sessionStorage.getItem("uTeacher");
+
+    var mainContent = document.getElementById('mainContent');
+
+    console.log(sessionStorage.getItem("uAdmin"));
+    console.log(sessionStorage.getItem("uTeacher"));
+    console.log(sessionStorage.getItem("uStudent"));
+    
+
+    if(isStudent === "true"){
+        mainContent.innerHTML += `
+            <!-- Card per lo studente -->
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Login da studente</h5>
+                  <p class="card-text">Contenuto per gli studenti...</p>
+                  <button class="btn btn-primary" onclick="handleButtonClick('uStudent')">Click me</button>
+                </div>
+              </div>
+            </div>
+        `;
+    }
+    if(isTeacher === "true"){
+        mainContent.innerHTML += `
+            <!-- Card per lo studente -->
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Login da docente</h5>
+                  <p class="card-text">Contenuto per gli studenti...</p>
+                  <button class="btn btn-primary" onclick="handleButtonClick('uTeacher')">Click me</button>
+                </div>
+              </div>
+            </div>
+        `;
+    }
+    if(isAdmin === "true"){
+        mainContent.innerHTML += `
+            <!-- Card per lo studente -->
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Login da amministratore</h5>
+                  <p class="card-text">Contenuto per gli studenti...</p>
+                  <button class="btn btn-primary" onclick="handleButtonClick('uAdmin')">Click me</button>
+                </div>
+              </div>
+            </div>
+        `;
+    }
+
+    function handleButtonClick(userType) {
+        sessionStorage.removeItem("uStudent");
+        sessionStorage.removeItem("uTeacher");
+        sessionStorage.removeItem("uAdmin");
+        sessionStorage.setItem(userType, true);
+        window.location.href = "index.html";
+        // Add your logic here
+    }
+
+</script>
+<div id="cookie-banner" style="display: none;">
+  Questo sito utilizza solo cookie tecnici per il puro funzionamento del sito.
+  <button id="consent-button">Acconsento</button>
+</div>
+
+<script>
+  // Function to get the value of a specific cookie
+  function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+  }
+
+  // Function to set a cookie
+  function setCookie(name, value, days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      const expires = `expires=${date.toUTCString()}`;
+      document.cookie = `${name}=${value};${expires};path=/`;
+  }
+
+  // Check if the cookie "cookie_consent" is set
+  if (!getCookie('cookie_consent')) {
+      document.getElementById('cookie-banner').style.display = 'block';
+  }
+
+  // Set the cookie when the user clicks "Acconsento"
+  document.getElementById('consent-button').addEventListener('click', function() {
+      setCookie('cookie_consent', 'accepted', 365); // Set cookie for 1 year
+      document.getElementById('cookie-banner').style.display = 'none';
+  });
+</script>
+
+<!-- Bootstrap JavaScript e librerie aggiuntive -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+</body>
+</html>

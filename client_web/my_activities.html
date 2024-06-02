@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista Attività</title>
+  <link rel="icon" type="image/ico" href="img/zlogo.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    tbody tr:hover {
+      background-color: #f2f2f2;
+      cursor: pointer;
+    }
+    .bg-light-gray {
+      background-color: #f7f7f7;
+    }
+    .table-bordered thead td, .table-bordered thead th {
+      border-bottom-width: 2px;
+    }
+    .table thead th {
+      vertical-align: bottom;
+      border-bottom: 2px solid #dee2e6;
+    }
+    .table-bordered td, .table-bordered th {
+      border: 1px solid #dee2e6;
+    }
+    .table td, .table th {
+      padding: .75rem;
+      vertical-align: top;
+      border-top: 1px solid #dee2e6;
+    }
+  </style>
+  <style>
+    /* Style for the cookie consent banner */
+    #cookie-banner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #333;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        z-index: 1000;
+    }
+    #cookie-banner button {
+        margin-left: 10px;
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    #cookie-banner button:hover {
+        background-color: #0056b3;
+    }
+</style>
+</head>
+<script>
+  (function() {
+    function getCookie(name) {
+      let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) {
+        return match[2];
+      } else {
+        return null;
+      }
+    }
+
+    // Check if the zToken cookie is set
+    if (!getCookie('zToken')) {
+      window.location.href = 'login.html';
+    }
+  })();
+</script>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"><img src="img/zlogo.png" alt="Logo" width="60" height="60"> zResources</a>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="user.html"><i class="bi bi-person"></i> Utente</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" style="margin-top: 120px;">
+    <h2 id="title" class="mb-4">Lista delle Attività</h2>  
+    <table id="activitiesTable" class="table">
+      <thead>
+        <tr>
+          <th scope="col">Nome Attività</th>
+          <th scope="col">Descrizione</th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Qui verranno inserite le righe della tabella tramite JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function fetchActivities() {
+      const url = "http://localhost/P002_TrovaPersoneRisorse/server_rest/user/activities";
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Si è verificato un errore durante la richiesta: ' + response.status);
+          }
+          return response.json();
+        })
+        .then(activities => {
+          displayActivities(activities);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+
+    function displayActivities(activities) {
+      const tableBody = document.getElementById("activitiesTable").getElementsByTagName('tbody')[0];
+      tableBody.innerHTML = ""; // Clear table body
+
+      activities.forEach(activity => {
+        const row = tableBody.insertRow();
+        row.insertCell(0).textContent = activity.name;
+        row.insertCell(1).textContent = activity.description;
+        row.insertCell(2).innerHTML = `<button class="btn btn-danger" onclick="deleteAct('${activity.name}')">Elimina</button>`;
+        row.insertCell(3).innerHTML = `<button class="btn btn-primary" onclick="viewDetails('${activity.name}')">Dettagli</button>`;
+      });
+    }
+
+    function deleteAct(){
+      fetch('http://localhost/P002_TrovaPersoneRisorse/server_rest/activity', {
+        method: 'DELETE'
+      }).then(response => {
+          if (!response.ok) {
+            throw new Error('Si è verificato un errore durante il logout: ' + response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Logout eseguito con successo', data);
+          
+        })
+        .catch(error => {
+          console.error('Errore durante il logout:', error);
+        });
+    }
+
+    function viewDetails(name){
+        window.location.href = `activity_details.html?activity=${name}`;
+    }
+
+    // Chiamata alla funzione per caricare i dati delle attività all'avvio della pagina
+    fetchActivities();
+  </script>
+  <div id="cookie-banner" style="display: none;">
+    Questo sito utilizza solo cookie tecnici per il puro funzionamento del sito.
+    <button id="consent-button">Acconsento</button>
+  </div>
+
+<script>
+    // Function to get the value of a specific cookie
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    }
+
+    // Function to set a cookie
+    function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = `expires=${date.toUTCString()}`;
+        document.cookie = `${name}=${value};${expires};path=/`;
+    }
+
+    // Check if the cookie "cookie_consent" is set
+    if (!getCookie('cookie_consent')) {
+        document.getElementById('cookie-banner').style.display = 'block';
+    }
+
+    // Set the cookie when the user clicks "Acconsento"
+    document.getElementById('consent-button').addEventListener('click', function() {
+        setCookie('cookie_consent', 'accepted', 365); // Set cookie for 1 year
+        document.getElementById('cookie-banner').style.display = 'none';
+    });
+</script>
+</body>
+</html>

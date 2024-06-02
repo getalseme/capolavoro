@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="icon" type="image/ico" href="img/zlogo.ico">
+  <link rel="stylesheet" href="style/login.css">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+  /* Style for the cookie consent banner */
+  #cookie-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      z-index: 1000;
+  }
+  #cookie-banner button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+  }
+  #cookie-banner button:hover {
+      background-color: #0056b3;
+  }
+</style>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href=""><img src="img/zlogo.png" alt="Logo" width="60" height="60"> zResources</a>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-4">
+        <div class="login-container">
+          <h2 class="text-center mb-4">Login</h2>
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+
+    // Debugging: Ensure email and password are captured correctly
+    console.log("Email: ", email);
+    console.log("Password: ", password);
+
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost/P002_TrovaPersoneRisorse/server_rest/user/login";
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            console.log("XHR State: ", xhr.readyState);
+            console.log("XHR Status: ", xhr.status);
+
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                console.log("Response: ", response);
+
+                var isAdmin = response.admin;
+                var isStudent = response.student;
+                var isTeacher = response.teacher;
+
+                var email = response.email;
+                var token = response.token;
+
+                setCookie('zToken', token, 1);
+                sessionStorage.setItem("email", email);
+
+                if (isAdmin) {
+                    sessionStorage.setItem("uAdmin", "true");
+                }
+                if (isTeacher) {
+                    sessionStorage.setItem("uTeacher", "true");
+                }
+                if (isStudent) {
+                    sessionStorage.setItem("uStudent", "true");
+                }
+
+                if ((isAdmin && isTeacher) || (isAdmin && isStudent)) {
+                    window.location.href = "login_choice.html";
+                } else {
+                    window.location.href = "index.html";
+                }
+            } else if (xhr.status === 401) {
+                alert("Incorrect password");
+            } else if (xhr.status === 404) {
+                alert("Email not found");
+            } else {
+                alert("Error: " + xhr.status);
+            }
+        }
+    };
+
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send("email=" + encodeURIComponent(email) + "&password=" + encodeURIComponent(password));
+});
+
+</script>
+
+<div id="cookie-banner" style="display: none;">
+  Questo sito utilizza solo cookie tecnici per il puro funzionamento del sito.
+  <button id="consent-button">Acconsento</button>
+</div>
+
+<script>
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+}
+
+if (!getCookie('cookie_consent')) {
+    document.getElementById('cookie-banner').style.display = 'block';
+}
+
+document.getElementById('consent-button').addEventListener('click', function() {
+    setCookie('cookie_consent', 'accepted', 365); // Set cookie for 1 year
+    document.getElementById('cookie-banner').style.display = 'none';
+});
+</script>
+
+</body>
+</html>

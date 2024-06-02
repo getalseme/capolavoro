@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista Prenotazioni</title>
+  <link rel="icon" type="image/ico" href="img/zlogo.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    /* Style for the cookie consent banner */
+    #cookie-banner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #333;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        z-index: 1000;
+    }
+    #cookie-banner button {
+        margin-left: 10px;
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    #cookie-banner button:hover {
+        background-color: #0056b3;
+    }
+</style>
+  <style>
+    tbody tr:hover {
+      background-color: #f2f2f2;
+      cursor: pointer;
+    }
+    .bg-light-gray {
+      background-color: #f7f7f7;
+    }
+    .table-bordered thead td, .table-bordered thead th {
+      border-bottom-width: 2px;
+    }
+    .table thead th {
+      vertical-align: bottom;
+      border-bottom: 2px solid #dee2e6;
+    }
+    .table-bordered td, .table-bordered th {
+      border: 1px solid #dee2e6;
+    }
+    .table td, .table th {
+      padding: .75rem;
+      vertical-align: top;
+      border-top: 1px solid #dee2e6;
+    }
+  </style>
+</head>
+<script>
+  (function() {
+    function getCookie(name) {
+      let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) {
+        return match[2];
+      } else {
+        return null;
+      }
+    }
+
+    // Check if the zToken cookie is set
+    if (!getCookie('zToken')) {
+      window.location.href = 'login.html';
+    }
+  })();
+</script>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"><img src="img/zlogo.png" alt="Logo" width="60" height="60"> zResources</a>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="user.html"><i class="bi bi-person"></i> Utente</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" style="margin-top: 120px;">
+    <h1>Lista delle prenotazioni</h1>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Giorno</th>
+                <th>Ora</th>
+                <th>Aula</th>
+                <th>Attività</th>
+                <th>Motivo</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody id="bookingsTableBody">
+            <!-- Rows will be populated here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function fetchBookings() {
+        fetch('http://localhost/P002_TrovaPersoneRisorse/server_rest/user/bookings')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('bookingsTableBody');
+                tableBody.innerHTML = '';
+                data.forEach(booking => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-day-time-id', booking.day_time_id);
+                    row.setAttribute('data-room-id', booking.room_id);
+                    row.setAttribute('data-teacher-id', booking.teacher_id);
+                    
+                    row.innerHTML = `
+                        <td>${booking.day}</td>
+                        <td>${booking.hour}</td>
+                        <td>${booking.room_name}</td>
+                        <td class="activity">${booking.activity_name}</td>
+                        <td class="reason">${booking.reason}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="editBooking(${booking.day_time_id}, ${booking.room_id})">MODIFICA</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteBooking(${booking.day_time_id}, ${booking.room_id})">ELIMINA</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Si è verificato un errore durante il recupero delle prenotazioni.');
+            });
+    }
+
+    function deleteBooking(day_time_id, room_id) {
+        fetch(`http://localhost/P002_TrovaPersoneRisorse/server_rest/booking?day_time_id=${day_time_id}&room_id=${room_id}`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+            }
+            fetchBookings(); // Refresh the booking list
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Si è verificato un errore durante la richiesta: ' + error.message);
+        });
+    }
+
+    function editBooking(day_time_id, room_id) {
+        const row = document.querySelector(`tr[data-day-time-id="${day_time_id}"][data-room-id="${room_id}"]`);
+        const activityCell = row.querySelector('.activity');
+        const reasonCell = row.querySelector('.reason');
+        const currentActivity = activityCell.textContent;
+        const currentReason = reasonCell.textContent;
+
+        // Fetch activities
+        fetch('http://localhost/P002_TrovaPersoneRisorse/server_rest/activity/all')
+            .then(response => response.json())
+            .then(data => {
+                // Create select element
+                const select = document.createElement('select');
+                select.name = 'activity';
+                select.id = 'activity';
+
+                // Populate select options
+                data.forEach(activity => {
+                    const option = document.createElement('option');
+                    option.value = activity.name;  // Use activity.id here
+                    option.textContent = activity.name;
+                    if (activity.name === currentActivity) {
+                        option.selected = true; // Set current activity as selected
+                    }
+                    select.appendChild(option);
+                });
+
+                // Replace activity cell content with select element
+                activityCell.innerHTML = '';
+                activityCell.appendChild(select);
+            })
+            .catch(error => {
+                console.error('Error fetching activities:', error);
+                alert('Si è verificato un errore durante il recupero delle attività.');
+            });
+
+        reasonCell.innerHTML = `<input type="text" name="reason" value="${currentReason}">`;
+
+        const actionCell = row.querySelector('td:last-child');
+        actionCell.innerHTML = `
+            <button onclick="updateBooking(${day_time_id}, ${room_id})">AGGIORNA</button>
+            <button onclick="cancelEdit(${day_time_id}, ${room_id}, '${currentActivity}', '${currentReason}')">ANNULLA</button>
+        `;
+    }
+
+    function cancelEdit(day_time_id, room_id, originalActivity, originalReason) {
+        const row = document.querySelector(`tr[data-day-time-id="${day_time_id}"][data-room-id="${room_id}"]`);
+        const activityCell = row.querySelector('.activity');
+        const reasonCell = row.querySelector('.reason');
+
+        activityCell.textContent = originalActivity;
+        reasonCell.textContent = originalReason;
+
+        const actionCell = row.querySelector('td:last-child');
+        actionCell.innerHTML = `
+            <button class="btn btn-primary btn-sm" onclick="editBooking(${day_time_id}, ${room_id})">MODIFICA</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteBooking(${day_time_id}, ${room_id})">ELIMINA</button>
+        `;
+    }
+
+    function updateBooking(day_time_id, room_id) {
+        const row = document.querySelector(`tr[data-day-time-id="${day_time_id}"][data-room-id="${room_id}"]`);
+        console.log(row.innerHTML);
+        const select = document.querySelector('#activity');
+        console.log('Valore:' , select.value);
+        const activity_id = select.value;
+        const reasonInput = row.querySelector('input[name="reason"]');
+        const reason = reasonInput.value;
+        const teacher_id = row.getAttribute('data-teacher-id');
+
+        fetch('http://localhost/P002_TrovaPersoneRisorse/server_rest/booking', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                day_time_id: day_time_id,
+                room_id: room_id,
+                teacher_id: teacher_id,
+                activity_id: activity_id,  // Use activity_id here
+                reason: reason,
+            }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+            }
+            fetchBookings(); // Refresh the booking list
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Si è verificato un errore durante la richiesta: ' + error.message);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchBookings);
+  </script>
+
+  <div id="cookie-banner" style="display: none;">
+    Questo sito utilizza solo cookie tecnici per il puro funzionamento del sito.
+    <button id="consent-button">Acconsento</button>
+  </div>
+
+<script>
+    // Function to get the value of a specific cookie
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    }
+
+    // Function to set a cookie
+    function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = `expires=${date.toUTCString()}`;
+        document.cookie = `${name}=${value};${expires};path=/`;
+    }
+
+    // Check if the cookie "cookie_consent" is set
+    if (!getCookie('cookie_consent')) {
+        document.getElementById('cookie-banner').style.display = 'block';
+    }
+
+    // Set the cookie when the user clicks "Acconsento"
+    document.getElementById('consent-button').addEventListener('click', function() {
+        setCookie('cookie_consent', 'accepted', 365); // Set cookie for 1 year
+        document.getElementById('cookie-banner').style.display = 'none';
+    });
+</script>
+
+  
+</body>
+</html>

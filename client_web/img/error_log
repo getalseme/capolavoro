@@ -1,0 +1,4 @@
+[29-Apr-2024 15:08:40 UTC] HTTP 404 (GET /)
+[29-Apr-2024 15:08:40 UTC] [index.php:49] Base->run()
+[29-Apr-2024 15:09:42 UTC] HTTP 404 (GET /index.php/classes)
+[29-Apr-2024 15:09:42 UTC] [index.php:49] Base->run()

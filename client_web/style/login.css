@@ -1,0 +1,12 @@
+body {
+    background-image: url('https://media.licdn.com/dms/image/C4E1BAQF0YPCQ6zSKPQ/company-background_10000/0/1605353042233/itiszuccante_cover?e=2147483647&v=beta&t=ufKeP_o0p04O5LAvz21utCKHXfvw_N0lVnFh7ZSzpOg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+  }
+  .login-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 100px;
+  }

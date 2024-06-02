@@ -1,0 +1,41 @@
+<?php
+
+require 'vendor/autoload.php';
+require 'class/DB.php';
+use \Firebase\JWT\JWT;
+use \Firebase\JWT\Key;
+
+// Funzione per verificare e decodificare un token JWT
+function verifyToken($token) {
+    $secret_key = "il potere logora chi non ce l'ha";
+    try {
+        $decoded = JWT::decode($token, new Key($secret_key, 'HS256'));
+        return $decoded;
+    } catch (Exception $e) {
+        return null; // Token non valido o scaduto
+    }
+}
+
+
+header('Content-Type: application/json; charset=utf-8');
+
+if(isset($_COOKIE['zToken'])){
+    $decodedToken = verifyToken($_COOKIE['zToken']);
+    if($decodedToken !== null){
+        $class = $_GET['class'];
+        $db = new DB();
+        $conn = $db->getConnection();
+        $stmt = $conn->prepare('SELECT * FROM view_schedule WHERE class = ?');
+        $stmt->execute([$class]);
+        $result = $stmt->fetchAll();
+        echo json_encode($result);
+    }else{
+        http_response_code(498);
+        $response = array("message" => "Token expired/invalid");
+        echo json_encode($response);
+    }
+}else{
+    http_response_code(400);
+    $response = array("message" => "Missing zToken in cookies");
+    echo json_encode($response);
+}
